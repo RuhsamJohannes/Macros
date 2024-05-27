@@ -21,7 +21,8 @@ class InputSimulatorApp:
             "create_int", "get_int", "inc_int", "dec_int"
         ]
         self.create_widgets()
-
+        self.update_mouse_position()
+    
     def create_widgets(self):
         self.root.grid_rowconfigure(0, weight=0)
         self.root.grid_rowconfigure(1, weight=0)
@@ -34,9 +35,13 @@ class InputSimulatorApp:
         self.root.grid_columnconfigure(2, weight=1)
         self.root.grid_columnconfigure(3, weight=1)
 
-        self.help_button = tk.Button(self.root, text="?", command=self.open_help_panel)
-        self.help_button.grid(row=5, column=3, padx=10, pady=5, sticky="nsew")
+        # Add labels to display mouse coordinates
+        self.mouse_position_label_x = tk.Label(self.root, text="Mouse X: 0")
+        self.mouse_position_label_x.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
+        self.mouse_position_label_y = tk.Label(self.root, text="Mouse Y: 0")
+        self.mouse_position_label_y.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+        
         self.command_entry = ttk.Combobox(self.root, values=self.available_commands, width=50)
         self.command_entry.grid(row=1, column=0, columnspan=4, padx=10, pady=5, sticky="nsew")
         self.command_entry.bind("<Return>", lambda event: self.add_command())
@@ -74,6 +79,17 @@ class InputSimulatorApp:
 
         self.import_button = tk.Button(self.root, text="Import Commands", command=self.import_commands)
         self.import_button.grid(row=5, column=2, padx=10, pady=5, sticky="nsew")
+        
+        self.help_button = tk.Button(self.root, text="?", command=self.open_help_panel)
+        self.help_button.grid(row=5, column=3, padx=10, pady=5, sticky="nsew")
+
+
+    def update_mouse_position(self):
+        x, y = pyautogui.position()
+        self.mouse_position_label_x.config(text=f"X: {x}")
+        self.mouse_position_label_y.config(text=f"Y: {y}")
+        self.root.after(100, self.update_mouse_position)  # Update every 100 ms
+
 
     def open_help_panel(self):
         # Define the function to open the help panel with descriptions
